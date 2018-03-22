@@ -8,9 +8,10 @@ package com.mavha.ams.stress.test01;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
+import java.io.File;
+import java.io.IOException;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author marti
  */
-@WebServlet(name = "Proceso01", urlPatterns = {"/proceso02"})
+@WebServlet(name = "Proceso02", urlPatterns = {"/proceso02"})
 public class Proceso02 extends HttpServlet {
 
     /**
@@ -61,9 +62,10 @@ public class Proceso02 extends HttpServlet {
         Date fechaInicial = new Date();
         Random r = new Random();
         Double valorPorcentual = r.nextDouble();
-        Double tiempoDormir = 1 +(valorPorcentual  * 3000.0);
+        Double tiempoDormir = 1 +(valorPorcentual  * 100.0);
         try {
             Thread.currentThread().sleep(tiempoDormir.intValue());
+            generarImagen("img_"+System.currentTimeMillis());
         } catch (InterruptedException ex) {
             Logger.getLogger(Proceso02.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -80,6 +82,35 @@ public class Proceso02 extends HttpServlet {
         return objeto.toString();
     }
 
+
+private void generarImagen(String nombre){     //image dimension
+     int width = 640;
+     int height = 320;
+     //create buffered image object img
+     BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+     //file object
+     File f = null;
+     //create random image pixel by pixel
+     for(int y = 0; y < height; y++){
+       for(int x = 0; x < width; x++){
+         int a = (int)(Math.random()*256); //alpha
+         int r = (int)(Math.random()*256); //red
+         int g = (int)(Math.random()*256); //green
+         int b = (int)(Math.random()*256); //blue
+ 
+         int p = (a<<24) | (r<<16) | (g<<8) | b; //pixel
+ 
+         img.setRGB(x, y, p);
+       }
+     }
+     //write image
+     try{
+       f = new File("C:/Users/marti/Pictures/test/"+nombre+".png");
+       ImageIO.write(img, "png", f);
+     }catch(IOException e){
+         e.printStackTrace();
+     }
+  }//main() ends here
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
